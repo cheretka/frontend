@@ -55,46 +55,49 @@ function CheckersPage(props: CheckersPageProps) {
         <Container>
             <h1>{HEADER}</h1>
             <Board>
-                {game.board.flatMap((row, rowIndex) =>
-                    row.map((item, itemIndex) => {
-                        const playableField = isFieldPlayable(rowIndex, itemIndex);
-                        const clickableField =
-                            selectedPiece && playableField && item === ' ' && game.your_move;
-                        const clickablePiece = game.your_move;
-                        const isRed = item === 'r' || item === 'R';
-                        const isQueen = item === 'A' || item === 'R';
-                        const isPieceSelected =
-                            selectedPiece &&
-                            selectedPiece[0] === rowIndex &&
-                            selectedPiece[1] === itemIndex;
+                {game &&
+                    game.board.flatMap((row, rowIndex) =>
+                        row.map((item, itemIndex) => {
+                            const playableField = isFieldPlayable(rowIndex, itemIndex);
+                            const clickableField =
+                                selectedPiece && playableField && item === ' ' && game.your_move;
+                            const clickablePiece = game.your_move;
+                            const isRed = item === 'r' || item === 'R';
+                            const isQueen = item === 'A' || item === 'R';
+                            const isPieceSelected =
+                                selectedPiece &&
+                                selectedPiece[0] === rowIndex &&
+                                selectedPiece[1] === itemIndex;
 
-                        return (
-                            <Field
-                                key={`filed-${rowIndex}-${itemIndex}`}
-                                isGreen={playableField}
-                                onClick={
-                                    clickableField ? handleFieldOnClick(rowIndex, itemIndex) : null
-                                }
-                                clickable={clickableField}
-                            >
-                                {item !== ' ' && (
-                                    <Piece
-                                        isRed={isRed}
-                                        isSelected={isPieceSelected}
-                                        onClick={
-                                            clickablePiece
-                                                ? handlePieceOnCLick(rowIndex, itemIndex)
-                                                : null
-                                        }
-                                        clickable={clickablePiece}
-                                    >
-                                        {isQueen && <FontAwesomeIcon icon={faCrown} />}
-                                    </Piece>
-                                )}
-                            </Field>
-                        );
-                    })
-                )}
+                            return (
+                                <Field
+                                    key={`filed-${rowIndex}-${itemIndex}`}
+                                    isGreen={playableField}
+                                    onClick={
+                                        clickableField
+                                            ? handleFieldOnClick(rowIndex, itemIndex)
+                                            : null
+                                    }
+                                    clickable={clickableField}
+                                >
+                                    {item !== ' ' && (
+                                        <Piece
+                                            isRed={isRed}
+                                            isSelected={isPieceSelected}
+                                            onClick={
+                                                clickablePiece
+                                                    ? handlePieceOnCLick(rowIndex, itemIndex)
+                                                    : null
+                                            }
+                                            clickable={clickablePiece}
+                                        >
+                                            {isQueen && <FontAwesomeIcon icon={faCrown} />}
+                                        </Piece>
+                                    )}
+                                </Field>
+                            );
+                        })
+                    )}
             </Board>
             <GameStatus>{getGameStatus()}</GameStatus>
         </Container>
