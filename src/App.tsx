@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 import AgarntPage from './pages/game-pages/AgarntPage';
-import ChekersPage from './pages/game-pages/ChekersPage';
+import CheckersPage from './pages/game-pages/CheckersPage';
 
 function App() {
     return (
@@ -22,7 +22,7 @@ function App() {
                     <Router>
                         <Switch>
                             <Route exact path="/agarnt/" component={AgarntPage} />
-                            <Route exact path="/checkers/" component={ChekersPage} />
+                            <Route exact path="/checkers/" component={CheckersPage} />
                             <Route exact path="/" component={MainPage} />
                             <Route exact path="/about/" component={AboutPage} />
                             <Route exact path="/contact/" component={ContactPage} />
