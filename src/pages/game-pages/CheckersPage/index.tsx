@@ -12,7 +12,7 @@ import { CheckersPageProps, GameState } from './types';
 import { INITIAL_STATE } from './helpers';
 import { GAME_STATUS } from './constants';
 
-const HEADER = 'Checkers by CheretKa';
+const HEADER = 'Online Draughts';
 
 function CheckersPage(props: CheckersPageProps) {
     const { sessionId, playerName } = props.location.state;
@@ -50,11 +50,11 @@ function CheckersPage(props: CheckersPageProps) {
             case GAME_STATUS.wait:
                 return 'Waiting for the other player...';
             case GAME_STATUS.won:
-                return 'You won!';
+                return 'Congratulation, You won!! ;))';
             case GAME_STATUS.lost:
-                return 'You lost!';
+                return 'Sorry, You lost... :((';
             case GAME_STATUS.draw:
-                return "It's a draw!";
+                return "Wow, It's a draw!";
             default:
                 return game.your_move ? 'Your turn!' : "Opponent's turn!";
         }
