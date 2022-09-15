@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ungzip, gzip } from 'pako';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
+//@ts-ignore
+import { useHistory } from 'react-router-dom';
+
+import { ReactComponent as ArrowIcon } from 'assets/images/svg/arrow-back.svg';
 
 import decodeUtf8 from 'global/util/decodeUtf8';
 import encodeUtf8 from 'global/util/encodeUtf8';
+import { capitalize } from 'global/util/stringOperations';
 
-import { Container, Board, Field, Piece, GameStatus } from './styled';
+import { Container, Board, Field, Piece, GameStatus, IconWrapper } from './styled';
 import { CheckersPageProps, GameState } from './types';
 import { INITIAL_STATE } from './helpers';
 import { GAME_STATUS } from './constants';
@@ -15,13 +20,16 @@ import { GAME_STATUS } from './constants';
 const HEADER = 'Online Draughts';
 
 function CheckersPage(props: CheckersPageProps) {
-    const { sessionId, playerName } = props.location.state;
+    const { sessionId, playerName, isSpectator } = props.location.state;
+    const history = useHistory();
+
+    const goToHomePage = () => history.push('/');
 
     const websocketUrl = `${
         process.env.REACT_APP_API_WEBSOCKET_SERVER_URL
     }/join_to_game?session_id=${encodeURIComponent(sessionId)}&player_name=${encodeURIComponent(
         playerName
-    )}`;
+    )}&is_spectator=${capitalize(isSpectator.toString())}`;
 
     const [selectedPiece, setSelectedPiece] = useState<[number, number]>();
     const [game, setGame] = useState<GameState>(INITIAL_STATE);
@@ -46,6 +54,8 @@ function CheckersPage(props: CheckersPageProps) {
     const websocketClosed = (state: ReadyState) =>
         state === ReadyState.CLOSING || state === ReadyState.CLOSED;
     const getGameStatus = () => {
+        if (isSpectator) return game.game_status;
+
         switch (game.game_status) {
             case GAME_STATUS.wait:
                 return 'Waiting for the other player...';
@@ -71,10 +81,20 @@ function CheckersPage(props: CheckersPageProps) {
         if (!game.your_move) setSelectedPiece(undefined);
     }, [game.your_move]);
 
-    if (websocketClosed(readyState)) return <h1>Connection lost!</h1>;
+    if (websocketClosed(readyState)) {
+        return (
+            <IconWrapper>
+                <ArrowIcon onClick={goToHomePage} cursor="pointer" />
+                <h1>Connection lost!</h1>
+            </IconWrapper>
+        );
+    }
 
     return (
         <Container>
+            <IconWrapper>
+                <ArrowIcon onClick={goToHomePage} cursor="pointer" />
+            </IconWrapper>
             <h1>{HEADER}</h1>
             <Board>
                 {game &&
@@ -83,13 +103,21 @@ function CheckersPage(props: CheckersPageProps) {
                             const playableField = isFieldPlayable(rowIndex, itemIndex);
                             const clickableField =
                                 selectedPiece && playableField && item === ' ' && game.your_move;
-                            const clickablePiece = game.your_move;
                             const isRed = item === 'r' || item === 'R';
                             const isQueen = item === 'A' || item === 'R';
                             const isPieceSelected =
                                 selectedPiece &&
                                 selectedPiece[0] === rowIndex &&
                                 selectedPiece[1] === itemIndex;
+                            const isLastPosition = game.last_move.some(
+                                (lastMove) => lastMove[0] === rowIndex && lastMove[1] === itemIndex
+                            );
+                            const displayPiece = item !== ' ' || isLastPosition;
+                            const clickablePiece =
+                                game.your_move &&
+                                ((game.player === 'a' && (item === 'a' || item === 'A')) ||
+                                    (game.player === 'r' && (item === 'r' || item === 'R')) ||
+                                    (isLastPosition && item === ' '));
 
                             return (
                                 <Field
@@ -102,10 +130,13 @@ function CheckersPage(props: CheckersPageProps) {
                                     }
                                     clickable={clickableField}
                                 >
-                                    {item !== ' ' && (
+                                    {displayPiece && (
                                         <Piece
                                             isRed={isRed}
-                                            isSelected={isPieceSelected}
+                                            isLastPosition={isLastPosition}
+                                            isSelected={
+                                                item !== ' ' && (isPieceSelected || isLastPosition)
+                                            }
                                             onClick={
                                                 clickablePiece
                                                     ? handlePieceOnCLick(rowIndex, itemIndex)
@@ -121,7 +152,9 @@ function CheckersPage(props: CheckersPageProps) {
                         })
                     )}
             </Board>
-            <GameStatus>{getGameStatus()}</GameStatus>
+            <GameStatus status={game.game_status} yourMove={game.your_move}>
+                {getGameStatus()}
+            </GameStatus>
         </Container>
     );
 }

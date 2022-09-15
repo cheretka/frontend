@@ -12,8 +12,9 @@ const INITIAL_STATE: GameState = {
         [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
     ],
     game_status: 'wait',
-    last_move: [0, 0],
+    last_move: [[-1, -1]],
     your_move: false,
+    player: 'a',
 };
 
 export { INITIAL_STATE };

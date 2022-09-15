@@ -1,11 +1,13 @@
 interface GameState {
     board: String[][];
     game_status: String;
-    last_move: [number, number];
+    last_move: [[number, number]];
     your_move: boolean;
+    player: String;
 }
 
 interface CheckersPageState {
+    isSpectator: boolean;
     playerName: string;
     sessionId: string;
 }

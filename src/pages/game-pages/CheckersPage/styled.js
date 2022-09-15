@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import { GAME_STATUS } from './constants';
+
 const Container = styled.div`
     display: flex;
     align-items: center;
@@ -29,7 +31,10 @@ const Field = styled.div`
 `;
 
 const Piece = styled.div`
-    background-color: ${({ isRed }) => (isRed ? '#c60001' : '#fef9f3')};
+    background-color: ${({ isRed, isLastPosition, isSelected }) => {
+        if (isLastPosition && !isSelected) return 'none';
+        return isRed ? '#c60001' : '#fef9f3';
+    }};
     width: 70%;
     height: 70%;
     border-radius: 50%;
@@ -37,11 +42,37 @@ const Piece = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    border: ${({ isSelected }) => (isSelected ? '4px solid black' : 'none')};
+    border: ${({ isSelected, isLastPosition }) => {
+        if (isLastPosition) return '4px dotted #AEAEAE';
+        return isSelected ? '4px solid black' : 'none';
+    }};
 `;
+
+const getStatusColor = (status, yourMove) => {
+    switch (status) {
+        case GAME_STATUS.lost:
+            return 'red';
+        case GAME_STATUS.draw:
+            return 'yellow';
+        case GAME_STATUS.won:
+            return 'green';
+        case yourMove:
+            return 'green';
+        default:
+            return 'black';
+    }
+};
 
 const GameStatus = styled.h2`
     margin-top: 20px;
+    color: ${({ status, yourMove }) => getStatusColor(status, yourMove)};
 `;
 
-export { Container, Board, Field, Piece, GameStatus };
+const IconWrapper = styled.div`
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+`;
+
+export { Container, Board, Field, Piece, GameStatus, IconWrapper };
