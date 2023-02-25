@@ -22,6 +22,27 @@ const Board = styled.div`
 `;
 
 const Field = styled.div`
+    ${({ isFutureField }) =>
+        isFutureField &&
+        `
+        @keyframes color {
+            0% {
+                background-color: #548a1b;
+            }
+            50% {
+                background-color: #0C1B33;
+            }
+            100% {
+                background-color: #548a1b;
+            }
+        }
+    
+        background-color: #548a1b;
+        animation-name: color;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+    `}
+
     background-color: ${({ isGreen }) => (isGreen ? '#548a1b' : '#ffedbb')};
     width: 50px;
     height: 50px;
@@ -45,8 +66,8 @@ const Piece = styled.div`
     justify-content: center;
     border: ${({ isSelected, isLastPosition, isPossibleToMove }) => {
         if (isLastPosition) return '4px dotted #AEAEAE';
-        if (isSelected) return '4px solid black';
-        if (isPossibleToMove) return '2px solid blue';
+        if (isSelected) return '4px solid #0C1B33';
+        if (isPossibleToMove) return '2px solid #0C1B33';
         return 'none';
     }};
 `;

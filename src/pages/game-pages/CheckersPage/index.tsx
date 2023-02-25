@@ -101,8 +101,6 @@ function CheckersPage(props: CheckersPageProps) {
                     game.board.flatMap((row, rowIndex) =>
                         row.map((item, itemIndex) => {
                             const playableField = isFieldPlayable(rowIndex, itemIndex);
-                            const clickableField =
-                                selectedPiece && playableField && item === ' ' && game.your_move;
                             const isRed = item === 'r' || item === 'R';
                             const isQueen = item === 'A' || item === 'R';
                             const isPieceSelected =
@@ -125,11 +123,27 @@ function CheckersPage(props: CheckersPageProps) {
                                         move[0][0] === rowIndex && move[0][1] === itemIndex
                                 );
                             const clickablePiece = currentPlayerPiece && isPossibleToMove;
+                            const futureField =
+                                selectedPiece &&
+                                game.possible_moves.find(
+                                    (move: number[][]) =>
+                                        move[0][0] === selectedPiece[0] &&
+                                        move[0][1] === selectedPiece[1] &&
+                                        move.slice(-1)[0][0] === rowIndex &&
+                                        move.slice(-1)[0][1] === itemIndex
+                                );
+                            const clickableField =
+                                selectedPiece &&
+                                playableField &&
+                                item === ' ' &&
+                                game.your_move &&
+                                futureField;
 
                             return (
                                 <Field
                                     key={`filed-${rowIndex}-${itemIndex}`}
                                     isGreen={playableField}
+                                    isFutureField={futureField}
                                     onClick={
                                         clickableField
                                             ? handleFieldOnClick(rowIndex, itemIndex)
@@ -150,7 +164,7 @@ function CheckersPage(props: CheckersPageProps) {
                                                     ? handlePieceOnCLick(rowIndex, itemIndex)
                                                     : null
                                             }
-                                            clickable={clickablePiece}
+                                            clickable={clickablePiece || futureField}
                                         >
                                             {isQueen && <FontAwesomeIcon icon={faCrown} />}
                                         </Piece>
