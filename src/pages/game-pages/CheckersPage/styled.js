@@ -18,6 +18,7 @@ const Board = styled.div`
     grid-row-gap: 0px;
     background-color: #fff;
     width: fit-content;
+    border: 2px solid #548a1b;
 `;
 
 const Field = styled.div`
@@ -42,9 +43,11 @@ const Piece = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    border: ${({ isSelected, isLastPosition }) => {
+    border: ${({ isSelected, isLastPosition, isPossibleToMove }) => {
         if (isLastPosition) return '4px dotted #AEAEAE';
-        return isSelected ? '4px solid black' : 'none';
+        if (isSelected) return '4px solid black';
+        if (isPossibleToMove) return '2px solid blue';
+        return 'none';
     }};
 `;
 

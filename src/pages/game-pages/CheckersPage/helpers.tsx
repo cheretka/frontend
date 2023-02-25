@@ -15,6 +15,12 @@ const INITIAL_STATE: GameState = {
     last_move: [[-1, -1]],
     your_move: false,
     player: 'a',
+    possible_moves: [
+        [
+            [0, 0],
+            [0, 0],
+        ],
+    ],
 };
 
 export { INITIAL_STATE };

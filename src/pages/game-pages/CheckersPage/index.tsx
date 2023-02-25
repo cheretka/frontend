@@ -113,11 +113,18 @@ function CheckersPage(props: CheckersPageProps) {
                                 (lastMove) => lastMove[0] === rowIndex && lastMove[1] === itemIndex
                             );
                             const displayPiece = item !== ' ' || isLastPosition;
-                            const clickablePiece =
+                            const currentPlayerPiece =
                                 game.your_move &&
                                 ((game.player === 'a' && (item === 'a' || item === 'A')) ||
                                     (game.player === 'r' && (item === 'r' || item === 'R')) ||
                                     (isLastPosition && item === ' '));
+                            const isPossibleToMove =
+                                currentPlayerPiece &&
+                                game.possible_moves.find(
+                                    (move: number[][]) =>
+                                        move[0][0] === rowIndex && move[0][1] === itemIndex
+                                );
+                            const clickablePiece = currentPlayerPiece && isPossibleToMove;
 
                             return (
                                 <Field
@@ -134,6 +141,7 @@ function CheckersPage(props: CheckersPageProps) {
                                         <Piece
                                             isRed={isRed}
                                             isLastPosition={isLastPosition}
+                                            isPossibleToMove={isPossibleToMove}
                                             isSelected={
                                                 item !== ' ' && (isPieceSelected || isLastPosition)
                                             }

@@ -4,6 +4,7 @@ interface GameState {
     last_move: [[number, number]];
     your_move: boolean;
     player: String;
+    possible_moves: number[][][];
 }
 
 interface CheckersPageState {
